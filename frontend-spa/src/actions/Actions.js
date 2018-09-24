@@ -1,4 +1,6 @@
-import { qs } from "../quantum/quantum";
+import { qs } from 'quantum-store';
+import { translate as en } from "../strings/en.js"
+import { translate as es } from "../strings/es.js"
 
 export const Actions = {
   setMessageFromBackend: (message) => {
@@ -9,5 +11,10 @@ export const Actions = {
   },
   stopLoadingMessageFromBackend: () => {
     qs.set("app", {...qs.get("app"), isCallingBackend: false} );
-  }
+  },
+  setLanguage: (locale) => {
+    qs.set("strings", {...qs.get("strings"), 
+      locale: locale, strings: (locale === 'es') ? es : en 
+    })
+  } 
 };

@@ -2,16 +2,23 @@ import React, { Component } from 'react';
 import axios from 'axios'
 import '../css/App.css';
 import { Actions } from '../actions/Actions'
-import { qs } from '../quantum/quantum';
+import { qs } from 'quantum-store';
 
 export default class App extends Component {
 
   constructor() {
     super();
-    this.state = {message: null, isCallingBackend: false};
+    this.state = {
+      message: null, 
+      isCallingBackend: false,
+      strings: qs.get("strings").strings
+    };
     qs.connect("app", this, (state) => {
       return { message: state.message, isCallingBackend: state.isCallingBackend };
-    });    
+    });  
+    qs.connect("strings", this, (state) => {
+      return { strings: state.strings };
+    });  
   }
 
   componentDidMount() {
@@ -30,20 +37,25 @@ export default class App extends Component {
       });
   }
 
+  changeLanguage() {
+    Actions.setLanguage( (qs.get("strings").locale === 'en') ? 'es' : 'en');
+  }
+
   render() {
     let message = this.state.message;
     return (
       <div className="app-container">
-        <h1 className="app-title">react-redux-express-starter</h1>
+        <h1 className="app-title">{ this.state.strings.title }</h1>
         {
-          !this.state.isCallingBackend && !!message && ("The backend was successfully called. Its message is: " + message)
+          !this.state.isCallingBackend && !!message && (this.state.strings.success + message)
         }
         {
-          !this.state.isCallingBackend && !message && "The message could not be retrieved from backend :/"
+          !this.state.isCallingBackend && !message && this.state.strings.error
         }
         {
-          this.state.isCallingBackend && "Retrieving the message..."
+          this.state.isCallingBackend && this.state.strings.loading
         }
+        <div className="button" onClick={this.changeLanguage}>{this.state.strings.changeLang} { qs.get("strings").locale}</div>
       </div>
     );
   }

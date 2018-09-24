@@ -10,3 +10,5 @@
   text-align: center;
   color: black;
 }
+
+.button{cursor:pointer;padding: 10px;margin: 20px;position:relative;float:left;background:#e95e51;color: #fff;text-align: center;line-height:45px;border-radius:4px;}
